@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package domain;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "masukAPI/internal/grpc/domain";
+
+message Repository {
+  int64 id  = 1;
+  string username = 2;
+  string email = 3;
+  string first_name = 4;
+  string middle_name = 5;
+  string last_name = 6;
+  string mobile = 7;
+  string phone = 8;
+  bool active = 9;
+  google.protobuf.Timestamp createdAt = 10;
+  google.protobuf.Timestamp updatedAt = 11;
+  google.protobuf.Timestamp deletedAt = 12;
+}

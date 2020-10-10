@@ -2,11 +2,9 @@ package main
 
 import (
 	"context"
-	"log"
-
+	service "go8ddd/internal/domain/grpc_gen"
 	"google.golang.org/grpc"
-
-	"masuk/internal/grpc/service"
+	"log"
 )
 
 func main() {

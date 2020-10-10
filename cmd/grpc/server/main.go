@@ -1,53 +1,33 @@
 package main
 
 import (
-	"flag"
-
-	"masuk/internal/api"
-	"masuk/internal/configs"
-	"masuk/internal/datastore"
-	grpcAPI "masuk/internal/grpc"
-	"masuk/internal/grpc/impl"
-	"masuk/internal/grpc/service"
-	jwtPkg "masuk/pkg/jwt"
+	"go8ddd/configs"
+	"go8ddd/internal/domain/grpc_gen"
+	"go8ddd/internal/library/grpc"
+	"go8ddd/internal/library/grpc/impl"
+	"go8ddd/internal/library/jwt"
+	"go8ddd/internal/library/logger"
+	"go8ddd/internal/server/server"
 )
 
-var flagConfig = flag.String("config", "./config/dev.yml", "path to the config file")
+const Version = "v0.2.0"
+
 
 func main() {
-	cfg, err := configs.New(*flagConfig)
-	if err != nil {
-		panic(err)
-	}
+	log := logger.New(Version)
+	cfg := configs.New(log)
+	db := configs.NewDatabase(log, cfg)
+	tokenAuth := jwt.New(cfg.Jwt)
+	g := grpc.New(log, cfg.Grpc)
 
-	dataStoreCfg, err := cfg.DataStore()
-	if err != nil {
-		panic(err)
-	}
+	s := server.New(log, db, g, cfg, tokenAuth)
 
-	db, err := datastore.New(dataStoreCfg)
-	if err != nil {
-		panic(err)
-	}
 
-	tokenAuth := jwtPkg.New(cfg.JWT)
+	repositoryServiceImpl := impl.NewRepositoryServiceGrpcImpl(s)
+	grpc_gen.RegisterUserServiceServer(s.GrpcServer.Server, repositoryServiceImpl)
+	//service.RegisterUserServiceServer(s.GrpcServer.Server, nil)
 
-	grpcConfig, err := cfg.GRPC()
-	if err != nil {
-		panic(err)
-	}
-
-	grpcServer := grpcAPI.New(grpcConfig)
-
-	apiServer, err := api.New(grpcServer, db, tokenAuth, cfg)
-	if err != nil {
-		panic(err)
-	}
-
-	repositoryServiceImpl := impl.NewRepositoryServiceGrpcImpl(apiServer)
-	service.RegisterUserServiceServer(apiServer.GrpcServer.Server, repositoryServiceImpl)
-
-	err = apiServer.StartGrpc()
+	err := s.Start()
 	if err != nil {
 		panic(err)
 	}

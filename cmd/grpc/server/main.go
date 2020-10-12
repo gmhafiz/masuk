@@ -25,7 +25,6 @@ func main() {
 
 	repositoryServiceImpl := impl.NewRepositoryServiceGrpcImpl(s)
 	grpc_gen.RegisterUserServiceServer(s.GrpcServer.Server, repositoryServiceImpl)
-	//service.RegisterUserServiceServer(s.GrpcServer.Server, nil)
 
 	err := s.Start()
 	if err != nil {

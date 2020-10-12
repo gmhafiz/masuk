@@ -17,6 +17,7 @@ require (
 	github.com/go-playground/validator/v10 v10.4.0
 	github.com/go-redis/redis/v8 v8.3.0
 	github.com/golang/protobuf v1.4.2
+	github.com/grpc-ecosystem/grpc-gateway v1.9.0
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.2.1-0.20191011153232-f91d3411e481

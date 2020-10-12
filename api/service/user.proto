@@ -3,6 +3,7 @@ syntax = "proto3";
 package proto;
 
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
 
 option go_package = "internal/domain/grpc_gen";
 
@@ -65,6 +66,11 @@ service UserService {
   rpc UpdateUser (GetUserRequest) returns (GetUserResponse);
   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
 
-  rpc Login (LoginRequest) returns (LoginResponse);
+  rpc Login (LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+        post: "/api/auth/login"
+        body: "*"
+      };
+  };
   rpc Logout (LoginRequest) returns (LoginResponse);
 }
